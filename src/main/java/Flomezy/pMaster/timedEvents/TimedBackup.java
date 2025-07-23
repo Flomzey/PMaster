@@ -1,7 +1,9 @@
 package Flomezy.pMaster.timedEvents;
 
 import org.bukkit.Bukkit;
+
 import java.time.Duration;
+import java.util.logging.Logger;
 
 
 /**
@@ -11,32 +13,47 @@ public class TimedBackup implements TimedEvent{
 
     //TODO: add properties file to edit variables
 
-    private Duration sleepTime;
+    private final int sleepTimeS;
+    private final Logger logger;
+    private int timeUntilEventTask;
     private String eventName = this.getClass().getSimpleName();
 
-    public TimedBackup(Duration sleepTime){
-        this.sleepTime = sleepTime;
-
+    public TimedBackup(Duration sleepTimeS, Logger logger){
+        this.sleepTimeS = sleepTimeS.toSecondsPart();
+        timeUntilEventTask = sleepTimeS.toSecondsPart();
+        this.logger = logger;
     }
-
 
     @Override
     public boolean eventTask() {
-        return false;
+        printToConsole("Backing up files");
+
+        resetTimeUnitlEventTaskS();
+        return true;
     }
 
     @Override
-    public Duration getDurationMs() {
-        return sleepTime;
+    public int getDurationS() {
+        return sleepTimeS;
     }
 
     @Override
-    public int getTimeUntilEventS() {
-        return 0;
+    public int getTimeUntilEventTaskS() {
+        return timeUntilEventTask;
+    }
+
+    @Override
+    public void subtractTimeUntilEventTaskS() {
+        timeUntilEventTask--;
     }
 
     @Override
     public void printToConsole(String msg) {
-        Bukkit.getLogger().info("[PMaster]["+eventName+"] "+msg);
+        logger.info("["+eventName+"] " + msg);
+    }
+
+    @Override
+    public void resetTimeUnitlEventTaskS() {
+        timeUntilEventTask = sleepTimeS;
     }
 }

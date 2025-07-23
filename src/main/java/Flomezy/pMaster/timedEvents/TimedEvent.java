@@ -9,27 +9,26 @@ public interface TimedEvent {
      * this returns false.
      * @return false if the task fails, true if it succeeds.
      */
-    public boolean eventTask();
+    boolean eventTask();
 
     /**
-     * Retreives the timing of the underlying event, which was set at
+     * Retrieves the timing of the underlying event, which was set at
      * construction of the Object.
      * @return time interval of the event in seconds.
      */
-    public Duration getDurationMs();
+    int getDurationS();
 
+    int getTimeUntilEventTaskS();
 
-    /**
-     * Retreives the time left until the next {@code eventTask()} is called
-     * @return time left until next event trigger.
-     */
-    public int getTimeUntilEventS();
+    void subtractTimeUntilEventTaskS();
+
+    void resetTimeUnitlEventTaskS();
 
     /**
      * Prints parameter to the console with plugin and Event tag.
      * @param msg
      */
-    public void printToConsole(String msg);
+    void printToConsole(String msg);
 
-    public String toString();
+    String toString();
 }

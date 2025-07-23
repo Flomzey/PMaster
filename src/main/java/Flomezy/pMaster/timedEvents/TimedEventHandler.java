@@ -1,27 +1,45 @@
 package Flomezy.pMaster.timedEvents;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+
 public class TimedEventHandler implements Runnable{
 
-    private TimedEvent event;
-    private boolean running = true;
+    private List<TimedEvent> events = new ArrayList<>();
+    public boolean running = true;
+    private final Logger logger;
 
-    public TimedEventHandler(TimedEvent event){
-        this.event = event;
+    public TimedEventHandler(Logger logger){
+        this.logger = logger;
     }
 
     @Override
-    public void run() {
-        while (running){
-            try{
+    public void run(){
+        while(running){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            for(TimedEvent event : events){
+                event.subtractTimeUntilEventTaskS();
+                if(event.getTimeUntilEventTaskS() != 0) continue;
                 event.eventTask();
-                Thread.sleep(event.getDurationMs());
-            }catch(Exception e){
-                //TODO: add exeption handling
             }
         }
     }
 
-    public TimedEvent getEvent(){
-        return event;
+    public void addEvent(TimedEvent newEvent){
+        events.add(newEvent);
+    }
+
+    public List<TimedEvent> getEvent(){
+        return events;
+    }
+
+    public void stop(){
+        this.running = false;
     }
 }

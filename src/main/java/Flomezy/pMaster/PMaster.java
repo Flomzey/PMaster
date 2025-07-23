@@ -1,14 +1,12 @@
 package Flomezy.pMaster;
 
-import Flomezy.pMaster.timedEvents.TimedBackup;
-import Flomezy.pMaster.timedEvents.TimedEvent;
-import Flomezy.pMaster.timedEvents.TimedEventHandler;
+import Flomezy.pMaster.TimedEvents.Events.TimedBackup;
+import Flomezy.pMaster.TimedEvents.TimedEventHandler;
 import org.bukkit.Bukkit;
 
-import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.logging.Logger;
 
@@ -23,7 +21,11 @@ public final class PMaster extends JavaPlugin {
 
         logger.info("setting up running Threads . . .");
 
-        eventHandler.addEvent(new TimedBackup(Duration.ofSeconds(10), logger));
+        eventHandler.addEvent(
+                new TimedBackup(Duration.ofSeconds(10),
+                logger,
+                new File("world/"),
+                new File("backups/world.zip")));
 
         thread = new Thread(eventHandler);
 

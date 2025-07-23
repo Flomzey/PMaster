@@ -1,7 +1,8 @@
-package Flomezy.pMaster.timedEvents;
+package Flomezy.pMaster.TimedEvents.Events;
 
-import org.bukkit.Bukkit;
-
+import Flomezy.pMaster.TimedEvents.TimedEvent;
+import Flomezy.pMaster.TimedEvents.Util.ZipUtil;
+import java.io.File;
 import java.time.Duration;
 import java.util.logging.Logger;
 
@@ -9,24 +10,28 @@ import java.util.logging.Logger;
 /**
  * @author flomzey
  */
-public class TimedBackup implements TimedEvent{
+public class TimedBackup implements TimedEvent {
 
     //TODO: add properties file to edit variables
 
     private final int sleepTimeS;
     private final Logger logger;
+    private final ZipUtil zipUtil;
     private int timeUntilEventTask;
-    private String eventName = this.getClass().getSimpleName();
+    private final String eventName = this.getClass().getSimpleName();
 
-    public TimedBackup(Duration sleepTimeS, Logger logger){
+    public TimedBackup(Duration sleepTimeS, Logger logger, File pathToBackup, File saveBackupPath){
         this.sleepTimeS = sleepTimeS.toSecondsPart();
         timeUntilEventTask = sleepTimeS.toSecondsPart();
         this.logger = logger;
+        zipUtil = new ZipUtil(pathToBackup, saveBackupPath);
     }
 
     @Override
     public boolean eventTask() {
         printToConsole("Backing up files");
+
+        //Zip directory here
 
         resetTimeUnitlEventTaskS();
         return true;

@@ -1,8 +1,8 @@
-package Flomezy.pMaster.timedEvents;
+package Flomezy.pMaster.TimedEvents.Events;
 
-import java.time.Duration;
+import Flomezy.pMaster.TimedEvents.TimedEvent;
 
-public class TimedUpdate implements TimedEvent{
+public class TimedUpdate implements TimedEvent {
 
     @Override
     public boolean eventTask() {

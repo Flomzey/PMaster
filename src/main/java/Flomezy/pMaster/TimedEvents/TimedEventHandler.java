@@ -1,4 +1,4 @@
-package Flomezy.pMaster.timedEvents;
+package Flomezy.pMaster.TimedEvents;
 
 import java.util.ArrayList;
 import java.util.List;

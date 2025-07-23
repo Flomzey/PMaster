@@ -1,6 +1,4 @@
-package Flomezy.pMaster.timedEvents;
-
-import java.time.Duration;
+package Flomezy.pMaster.TimedEvents;
 
 public interface TimedEvent {
 

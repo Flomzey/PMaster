@@ -1,0 +1,5 @@
+name: PMaster
+version: '0.1-SNAPSHOT'
+main: Flomezy.pMaster.PMaster
+api-version: '1.21'
+authors: [ Flomzey ]

@@ -42,6 +42,8 @@ public class ZipUtil {
         }
     }
 
+    //TODO: rewrite zip
+
     private void zipFileRecursive(File rootDir, File currentFile, ZipOutputStream zos) throws IOException {
         if (currentFile.isDirectory()) {
             File[] children = currentFile.listFiles();

@@ -5,27 +5,27 @@ import Flomezy.pMaster.TimedEvents.TimedEvent;
 public class TimedUpdate implements TimedEvent {
 
     @Override
-    public boolean eventTask() {
-        return false;
+    public void eventTask() {
+
     }
 
     @Override
-    public int getDurationS() {
+    public int getDurationPeriodCount() {
         return 0;
     }
 
     @Override
-    public int getTimeUntilEventTaskS() {
+    public int getPeriodsUntilNextEvent() {
         return 0;
     }
 
     @Override
-    public void subtractTimeUntilEventTaskS() {
+    public void subtractOnePeriod() {
 
     }
 
     @Override
-    public void resetTimeUnitlEventTaskS() {
+    public void resetPeriods() {
 
     }
 

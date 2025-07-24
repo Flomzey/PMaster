@@ -7,20 +7,20 @@ public interface TimedEvent {
      * this returns false.
      * @return false if the task fails, true if it succeeds.
      */
-    boolean eventTask();
+    void eventTask();
 
     /**
      * Retrieves the timing of the underlying event, which was set at
      * construction of the Object.
      * @return time interval of the event in seconds.
      */
-    int getDurationS();
+    int getDurationPeriodCount();
 
-    int getTimeUntilEventTaskS();
+    int getPeriodsUntilNextEvent();
 
-    void subtractTimeUntilEventTaskS();
+    void subtractOnePeriod();
 
-    void resetTimeUnitlEventTaskS();
+    void resetPeriods();
 
     /**
      * Prints parameter to the console with plugin and Event tag.

@@ -34,8 +34,10 @@ public class TimedBackup implements TimedEvent {
         this.destOfBackups = saveBackupPath;
     }
 
-    //TODO: change this it feels kinda off maybe make list of Worlds
-
+    /*TODO: rewrite the event task to the following, create World List in which the worlds are
+            saved after one another, then call every copy process to a subdirectory of backup
+            after that zip that subdirectory.
+     */
     @Override
     public void eventTask() {
         File worldContainer = Bukkit.getWorldContainer();

@@ -18,13 +18,13 @@ public final class PMaster extends JavaPlugin {
         logger.info("Setting up running Threads...");
 
         eventHandler.addEvent(
-                new TimedBackup(Duration.ofSeconds(10),
+                new TimedBackup(10,
                 logger,
-                new String[] {"world"},
+                new String[] {"world", "world_the_end"},
                 new File("world/"),
-                new File("backups/world.zip")));
+                new File("backups/")));
 
-        eventHandler.runTaskTimer(this, 0, 200);
+        eventHandler.runTaskTimer(this, 0, 20);
     }
 
     @Override

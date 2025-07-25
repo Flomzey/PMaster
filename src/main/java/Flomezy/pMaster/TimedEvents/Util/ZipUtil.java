@@ -11,15 +11,12 @@ public class ZipUtil {
     private FilenameFilter filter = (dir, name) -> !name.contains("session.lock");
     //TODO: maybe create a filter that can filter on input of user
 
-
     public void zip(File sourceDir, File zipFile) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
             zipFileRecursive(sourceDir, sourceDir, zos);
         }
     }
-
-    //TODO: rewrite zip
 
     private void zipFileRecursive(File rootDir, File currentFile, ZipOutputStream zos) throws IOException {
         if (currentFile.isDirectory()) {
@@ -28,25 +25,19 @@ public class ZipUtil {
                 String zipEntryName = rootDir.toPath().relativize(currentFile.toPath()).toString().replace("\\", "/") + "/";
                 zos.putNextEntry(new ZipEntry(zipEntryName));
                 zos.closeEntry();
-            } else {
-                for (File child : children) {
-                    zipFileRecursive(rootDir, child, zos);
-                }
+                return;
             }
-        } else {
-            String zipEntryName = rootDir.toPath().relativize(currentFile.toPath()).toString().replace("\\", "/");
-            zos.putNextEntry(new ZipEntry(zipEntryName));
-
-            try (FileInputStream fis = new FileInputStream(currentFile)) {
-                byte[] buffer = new byte[2048];
-                int length;
-                while ((length = fis.read(buffer)) >= 0) {
-                    zos.write(buffer, 0, length);
-                }
-            }
-
-            zos.closeEntry();
+            for (File child : children) zipFileRecursive(rootDir, child, zos);
+            return;
         }
+        String zipEntryName = rootDir.toPath().relativize(currentFile.toPath()).toString().replace("\\", "/");
+        zos.putNextEntry(new ZipEntry(zipEntryName));
+        try(FileInputStream fis = new FileInputStream(currentFile)){
+            byte[] buffer = new byte[2048];
+            int length;
+            while ((length = fis.read(buffer)) >= 0) zos.write(buffer, 0, length);
+        }
+        zos.closeEntry();
     }
 
 
@@ -67,19 +58,22 @@ public class ZipUtil {
 
     public void del(File target) throws IOException {
         if (!target.exists()) return;
-        if (!target.isDirectory()){
-            if(!target.delete())
+        if (!target.isDirectory()) {
+            if (!target.delete())
                 throw new IOException("Couldn't delete: " + target.getAbsolutePath());
             return;
         }
 
         File[] children = target.listFiles();
-        if(children == null)
-            throw new IOException("Couldn't delete: " + target.getAbsolutePath() + " doesn't exist");
+        if (children == null) {
+            if (!target.delete())
+                throw new IOException("Couldn't delete: " + target.getAbsolutePath());
+            return;
+        }
 
-        for(File child : children) del(child);
+        for (File child : children) del(child);
 
-        if(!target.delete())
+        if (!target.delete())
             throw new IOException("Couldn't delete: " + target.getAbsolutePath());
     }
 }

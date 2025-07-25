@@ -7,7 +7,6 @@ import org.bukkit.World;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.logging.Logger;
 
 
@@ -24,16 +23,18 @@ public class TimedBackup implements TimedEvent {
     private int periodsUntilEventTask;
     private final String eventName = this.getClass().getSimpleName();
     private final String[] worldNames;
-    private final File pathToBackup, destOfBackup;
+    private final File pathToBackup, destOfBackups;
 
-    public TimedBackup(Duration sleepTimeS, Logger logger, String[] worldNames, File pathToBackup, File saveBackupPath){
+    public TimedBackup(int sleepTimeS, Logger logger, String[] worldNames, File pathToBackup, File saveBackupPath){
         this.logger = logger;
         this.worldNames = worldNames;
-        this.sleepPeriodCount = sleepTimeS.toSecondsPart();
-        periodsUntilEventTask = sleepTimeS.toSecondsPart();
+        this.sleepPeriodCount = sleepTimeS;
+        periodsUntilEventTask = sleepTimeS;
         this.pathToBackup = pathToBackup;
-        this.destOfBackup = saveBackupPath;
+        this.destOfBackups = saveBackupPath;
     }
+
+    //TODO: change this it feels kinda off maybe make list of Worlds
 
     @Override
     public void eventTask() {
@@ -45,9 +46,6 @@ public class TimedBackup implements TimedEvent {
                 printToConsole( name + " doesn't exist or is already unloaded | not updating");
                 continue;
             }
-
-            printToConsole("Saving: " + name);
-
             currentWorld.save();
 
             printToConsole("Backing up files of: " + name);
@@ -56,14 +54,10 @@ public class TimedBackup implements TimedEvent {
                 try {
                     File copyPath = new File(worldContainer + "/" +name);
                     File destOfCopy = new File( "backups/" + name +"_copy");
+                    File destOfBackup = new File(destOfBackups.getAbsolutePath()+"/"+name+".zip");
 
-                    printToConsole("Copying files...");
                     zipUtil.copy(copyPath, destOfCopy);
-
-                    printToConsole("Zipping files...");
                     zipUtil.zip(destOfCopy, destOfBackup);
-
-                    printToConsole("Deleting copies...");
                     zipUtil.del(destOfCopy);
 
                     printToConsole("Backup of " + name + " successful!");

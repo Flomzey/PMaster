@@ -11,29 +11,6 @@ public class ZipUtil {
     private FilenameFilter filter = (dir, name) -> !name.contains("session.lock");
     //TODO: maybe create a filter that can filter on input of user
 
-    //public void zip(File rootDir, File currentFile) throws IOException {
-    //    File[] files = rootDir.listFiles();
-    //    if (files == null || files.length == 0)
-    //        throw new IllegalArgumentException("No files in Path" + rootDir.getAbsolutePath());
-//
-    //    FileOutputStream fos = new FileOutputStream(currentFile);
-    //    ZipOutputStream zipOut = new ZipOutputStream(fos);
-//
-    //    for (File zipThis : files) {
-    //        FileInputStream fis = new FileInputStream(zipThis);
-    //        ZipEntry zipEntry = new ZipEntry(zipThis.getName());
-//
-    //        zipOut.putNextEntry(zipEntry);
-    //        byte[] bytes = new byte[2048];
-    //        int length;
-    //        while ((length = fis.read(bytes)) >= 0) {
-    //            zipOut.write(bytes, 0, length);
-    //        }
-    //        fis.close();
-    //    }
-    //    zipOut.close();
-    //    fos.close();
-    //}
 
     public void zip(File sourceDir, File zipFile) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(zipFile);

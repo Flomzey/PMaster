@@ -7,6 +7,8 @@ import org.bukkit.World;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -22,53 +24,48 @@ public class TimedBackup implements TimedEvent {
     public final ZipUtil zipUtil = new ZipUtil();
     private int periodsUntilEventTask;
     private final String eventName = this.getClass().getSimpleName();
-    private final String[] worldNames;
-    private final File pathToBackup, destOfBackups;
+    private final List<World> worldsToSave = new ArrayList<>();
+    private final File backupDest, backupZipName;
 
-    public TimedBackup(int sleepTimeS, Logger logger, String[] worldNames, File pathToBackup, File saveBackupPath){
+    public TimedBackup(int sleepTimeS, Logger logger, String[] worldNames, File saveBackupPath) {
         this.logger = logger;
-        this.worldNames = worldNames;
+        for (String name : worldNames) worldsToSave.add(Bukkit.getWorld(name));
         this.sleepPeriodCount = sleepTimeS;
         periodsUntilEventTask = sleepTimeS;
-        this.pathToBackup = pathToBackup;
-        this.destOfBackups = saveBackupPath;
+        this.backupDest = saveBackupPath;
+        this.backupZipName = new File(backupDest + "/current_backup.zip");
     }
 
-    /*TODO: rewrite the event task to the following, create World List in which the worlds are
-            saved after one another, then call every copy process to a subdirectory of backup
-            after that zip that subdirectory.
-     */
     @Override
     public void eventTask() {
         File worldContainer = Bukkit.getWorldContainer();
+        File toBeZipped = new File(backupDest + "/backup");
 
-        for(String name : worldNames){
-            World currentWorld = Bukkit.getWorld(name);
-            if(currentWorld == null) {
-                printToConsole( name + " doesn't exist or is already unloaded | not updating");
-                continue;
-            }
-            currentWorld.save();
+        printToConsole("Saving worlds...");
 
-            printToConsole("Backing up files of: " + name);
+        worldsToSave.forEach(World::save);
 
-            new Thread(() -> { //to not impact server performance -> Thread
+        new Thread(() -> {
+            worldsToSave.forEach(world -> {
+                File copyPath = new File(worldContainer + "/" + world.getName());
+                File destOfCopy = new File(toBeZipped + "/" + world.getName());
+                printToConsole("Copying "+world.getName()+"...");
                 try {
-                    File copyPath = new File(worldContainer + "/" +name);
-                    File destOfCopy = new File( "backups/" + name +"_copy");
-                    File destOfBackup = new File(destOfBackups.getAbsolutePath()+"/"+name+".zip");
-
                     zipUtil.copy(copyPath, destOfCopy);
-                    zipUtil.zip(destOfCopy, destOfBackup);
-                    zipUtil.del(destOfCopy);
-
-                    printToConsole("Backup of " + name + " successful!");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }).start();
-        }
-        resetPeriods();
+            });
+            printToConsole("Zipping backup...");
+            try{
+                zipUtil.zip(toBeZipped, backupZipName);
+                printToConsole("Deleting temporary files...");
+                zipUtil.del(toBeZipped);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            printToConsole("Backup finished successfully!");
+        }).start();
     }
 
     @Override
@@ -89,7 +86,7 @@ public class TimedBackup implements TimedEvent {
 
     @Override
     public void printToConsole(String msg) {
-        logger.info("["+eventName+"] " + msg);
+        logger.info("[" + eventName + "] " + msg);
     }
 
     @Override

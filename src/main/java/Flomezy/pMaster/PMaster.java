@@ -4,7 +4,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import Flomezy.pMaster.TimedEvents.Events.TimedBackup;
 import Flomezy.pMaster.TimedEvents.TimedEventHandler;
 import java.io.File;
-import java.time.Duration;
 import java.util.logging.Logger;
 
 public final class PMaster extends JavaPlugin {
@@ -21,7 +20,6 @@ public final class PMaster extends JavaPlugin {
                 new TimedBackup(10,
                 logger,
                 new String[] {"world", "world_the_end"},
-                new File("world/"),
                 new File("backups/")));
 
         eventHandler.runTaskTimer(this, 0, 20);

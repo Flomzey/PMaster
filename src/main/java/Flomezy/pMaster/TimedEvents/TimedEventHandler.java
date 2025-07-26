@@ -25,6 +25,7 @@ public class TimedEventHandler extends BukkitRunnable {
                 continue;
             }
             event.eventTask();
+            event.resetPeriods();
         }
     }
 

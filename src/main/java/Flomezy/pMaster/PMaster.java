@@ -1,5 +1,6 @@
 package Flomezy.pMaster;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import Flomezy.pMaster.TimedEvents.Events.TimedBackup;
 import Flomezy.pMaster.TimedEvents.TimedEventHandler;
@@ -14,12 +15,21 @@ public final class PMaster extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        saveDefaultConfig();
+
         logger.info("Setting up running Threads...");
+
+        FileConfiguration config = this.getConfig();
+
+
+        logger.info(config.getString("backup.worlds"));
+
+        logger.info(config.getString("backup.save-dir"));
 
         eventHandler.addEvent(
                 new TimedBackup(10,
                 logger,
-                new String[] {"world", "world_the_end"},
+                new String[] {"world", "world_the_end", "world_nether"},
                 new File("backups/")));
 
         eventHandler.runTaskTimer(this, 0, 20);

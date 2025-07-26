@@ -1,0 +1,5 @@
+backup:
+  worlds: world, world_nether, world_the_end
+  save-dir: "backups/"
+  interval: 10S
+  zip-name: default

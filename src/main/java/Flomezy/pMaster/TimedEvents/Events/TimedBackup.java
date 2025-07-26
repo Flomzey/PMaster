@@ -17,7 +17,10 @@ import java.util.logging.Logger;
  */
 public class TimedBackup implements TimedEvent {
 
-    //TODO: add properties file to edit variables
+    /*TODO: add properties file to edit variables maybe do this in the constructor, you will need the Plugin for that
+            figure out wether you can maybe use datatypes, in the worst case just use strings to get the information
+            also figure out what type of timing you want to use using the variable that counts down makes sence, since
+            you maybe want to add more TimedEvents in the future that run on a diffrent time pattern.*/
 
     private final int sleepPeriodCount;
     private final Logger logger;

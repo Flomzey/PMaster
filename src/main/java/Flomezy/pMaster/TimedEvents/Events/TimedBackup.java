@@ -24,28 +24,45 @@ public class TimedBackup implements TimedEvent {
             also figure out what type of timing you want to use using the variable that counts down makes sence, since
             you maybe want to add more TimedEvents in the future that run on a diffrent time pattern.
 
-            Auto delete function, deleting updates after a specific length.
+            Auto delete function, deleting updates after a specific amount of stored updates.
             */
 
+
     private final String CONFIG_NAME = "backup";
+    private final File CONFIG_PATH = new File("./plugins/PMaster/" + CONFIG_NAME + "/backup/backup_default.yml");
     private final int sleepPeriodCount;
     private final Logger logger;
     public final ZipUtil zipUtil = new ZipUtil();
     private int periodsUntilEventTask;
     private final String eventName = this.getClass().getSimpleName();
-    private final List<World> worldsToSave = new ArrayList<>();
+    private final List<World> worlds;
+    private final List<String> worldNames = new ArrayList<>();
     private final File backupDest, backupZipName;
     private boolean running = false;
+    private final Plugin plugin;
+    private final FileConfiguration config;
 
-    public TimedBackup(Plugin plugin) {
+    public TimedBackup(Plugin plugin) throws IOException {
+        this.plugin = plugin;
         this.logger = plugin.getLogger();
-        FileConfiguration config = plugin.getConfig();
-        List<String> worldNames = config.getStringList(CONFIG_NAME+".worlds");
-        for (String name : worldNames) worldsToSave.add(Bukkit.getWorld(name));
+        config = plugin.getConfig();
+        worlds = Bukkit.getWorlds();
+
+        for(World world : worlds){
+            worldNames.add(world.getName());
+            printToConsole(world.getName());
+        }
+
+        config.set(CONFIG_NAME+".worlds", worldNames);
+        config.save("./plugins/PMaster/config.yml");
         this.sleepPeriodCount = 30;
         periodsUntilEventTask = sleepPeriodCount;
         this.backupDest = new File(config.getString(CONFIG_NAME+".save-dir"));
         this.backupZipName = new File(backupDest + "/current_backup.zip");
+    }
+
+    private void saveDefaultConfig() throws IOException {
+        config.save(CONFIG_PATH);
     }
 
     @Override
@@ -60,10 +77,12 @@ public class TimedBackup implements TimedEvent {
 
         printToConsole("Saving worlds...");
 
-        worldsToSave.forEach(World::save);
+        worlds.forEach(World::save);
+
+        Bukkit.getWorlds();
 
         new Thread(() -> {
-            worldsToSave.forEach(world -> {
+            worlds.forEach(world -> {
                 running = true;
                 File copyPath = new File(worldContainer + "/" + world.getName());
                 File destOfCopy = new File(toBeZipped + "/" + world.getName());

@@ -4,6 +4,8 @@ import Flomezy.pMaster.TimedEvents.TimedEvent;
 import Flomezy.pMaster.TimedEvents.Util.ZipUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +22,12 @@ public class TimedBackup implements TimedEvent {
     /*TODO: add properties file to edit variables maybe do this in the constructor, you will need the Plugin for that
             figure out wether you can maybe use datatypes, in the worst case just use strings to get the information
             also figure out what type of timing you want to use using the variable that counts down makes sence, since
-            you maybe want to add more TimedEvents in the future that run on a diffrent time pattern.*/
+            you maybe want to add more TimedEvents in the future that run on a diffrent time pattern.
 
+            Auto delete function, deleting updates after a specific length.
+            */
+
+    private final String CONFIG_NAME = "backup";
     private final int sleepPeriodCount;
     private final Logger logger;
     public final ZipUtil zipUtil = new ZipUtil();
@@ -29,18 +35,26 @@ public class TimedBackup implements TimedEvent {
     private final String eventName = this.getClass().getSimpleName();
     private final List<World> worldsToSave = new ArrayList<>();
     private final File backupDest, backupZipName;
+    private boolean running = false;
 
-    public TimedBackup(int sleepTimeS, Logger logger, String[] worldNames, File saveBackupPath) {
-        this.logger = logger;
+    public TimedBackup(Plugin plugin) {
+        this.logger = plugin.getLogger();
+        FileConfiguration config = plugin.getConfig();
+        List<String> worldNames = config.getStringList(CONFIG_NAME+".worlds");
         for (String name : worldNames) worldsToSave.add(Bukkit.getWorld(name));
-        this.sleepPeriodCount = sleepTimeS;
-        periodsUntilEventTask = sleepTimeS;
-        this.backupDest = saveBackupPath;
+        this.sleepPeriodCount = 30;
+        periodsUntilEventTask = sleepPeriodCount;
+        this.backupDest = new File(config.getString(CONFIG_NAME+".save-dir"));
         this.backupZipName = new File(backupDest + "/current_backup.zip");
     }
 
     @Override
     public void eventTask() {
+        if(running){
+            printToConsole("Backup already running, skipping this one...");
+            return;
+        }
+        running = true;
         File worldContainer = Bukkit.getWorldContainer();
         File toBeZipped = new File(backupDest + "/backup");
 
@@ -50,6 +64,7 @@ public class TimedBackup implements TimedEvent {
 
         new Thread(() -> {
             worldsToSave.forEach(world -> {
+                running = true;
                 File copyPath = new File(worldContainer + "/" + world.getName());
                 File destOfCopy = new File(toBeZipped + "/" + world.getName());
                 printToConsole("Copying "+world.getName()+"...");
@@ -68,6 +83,7 @@ public class TimedBackup implements TimedEvent {
                 throw new RuntimeException(e);
             }
             printToConsole("Backup finished successfully!");
+            running = false;
         }).start();
     }
 
@@ -95,5 +111,9 @@ public class TimedBackup implements TimedEvent {
     @Override
     public void resetPeriods() {
         periodsUntilEventTask = sleepPeriodCount;
+    }
+
+    public String toString(){
+        return CONFIG_NAME;
     }
 }

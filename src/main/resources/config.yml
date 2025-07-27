@@ -1,5 +1,18 @@
 backup:
-  worlds: world, world_nether, world_the_end
-  save-dir: "backups/"
+  #
+  worlds:
+    - world
+    - world_nether
+    - world_the_end
+  # Directory where the backup service will be working and saving its backups.
+  save-dir: ./backups/
+  # Interval of Backup.
+  # This time is composed of time 10 and a descriptor:
+  # S -> Seconds, M -> Minutes, H -> Hours, D -> Days
   interval: 10S
+  # File-name of the resulting zip file of the Backup.
+  # Default zip Name 'DD-MM-YYYY-HH:MM.zip'
+  # Changing the Name will override the existing files, when a new backup is made.
   zip-name: default
+
+update:

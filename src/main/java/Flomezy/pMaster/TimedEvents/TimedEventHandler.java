@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class TimedEventHandler extends BukkitRunnable {
 
     private List<TimedEvent> events = new ArrayList<>();
-    public boolean running = true;
+    public boolean running = false;
     private final Logger logger;
 
     public TimedEventHandler(Logger logger) {
@@ -29,8 +29,8 @@ public class TimedEventHandler extends BukkitRunnable {
         }
     }
 
-    public void addEvent(TimedEvent newEvent) {
-        events.add(newEvent);
+    public void add(TimedEvent event){
+        events.add(event);
     }
 
     public List<TimedEvent> getEvent() {

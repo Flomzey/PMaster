@@ -1,14 +1,11 @@
-# Default backup configuration file
-# DO NOT EDIT
-
 # List of names of the worlds to be backed up
 # The list will be set at the first start of your server
 worlds:
 # Directory where the backup service will be working and saving its backups
-save-dir: ./backups/
+save-dir: "./backups/"
 # Interval of Backup.
 # This time is composed of time 10 and a descriptor:
-# S -> Seconds, M -> Minutes, H -> Hours, D -> Days
+# M -> Minutes, H -> Hours, D -> Days
 interval: 10S
 # File-name of the resulting zip file of the Backup
 # Default zip Name 'DD-MM-YYYY-HH:MM.zip'

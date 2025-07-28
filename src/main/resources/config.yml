@@ -1,4 +1,4 @@
 # Enable plugins here. 1 -> Enabled, 0 -> Disabled
 plugin-enable:
-  backup: 1
-  update: 0
+  backup: true
+  update: false

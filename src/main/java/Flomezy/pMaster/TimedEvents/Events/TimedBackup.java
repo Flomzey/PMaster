@@ -29,7 +29,7 @@ public class TimedBackup implements TimedEvent {
 
 
     private final String CONFIG_NAME = "backup";
-    private final File CONFIG_PATH = new File("./plugins/PMaster/" + CONFIG_NAME + "/backup/backup_default.yml");
+    private final File CONFIG_PATH = new File("./plugins/PMaster/" + CONFIG_NAME + "/backup.yml");
     private final int sleepPeriodCount;
     private final Logger logger;
     public final ZipUtil zipUtil = new ZipUtil();
@@ -50,14 +50,14 @@ public class TimedBackup implements TimedEvent {
 
         for(World world : worlds){
             worldNames.add(world.getName());
-            printToConsole(world.getName());
         }
 
-        config.set(CONFIG_NAME+".worlds", worldNames);
-        config.save("./plugins/PMaster/config.yml");
-        this.sleepPeriodCount = 30;
+        config.set("worlds", worldNames);
+        config.save(CONFIG_PATH);
+        this.sleepPeriodCount = 30;//FIXED CHANGE
         periodsUntilEventTask = sleepPeriodCount;
-        this.backupDest = new File(config.getString(CONFIG_NAME+".save-dir"));
+        printToConsole(config.getString("save-dir"));
+        this.backupDest = new File(config.getString("save-dir"));
         this.backupZipName = new File(backupDest + "/current_backup.zip");
     }
 
@@ -79,11 +79,9 @@ public class TimedBackup implements TimedEvent {
 
         worlds.forEach(World::save);
 
-        Bukkit.getWorlds();
-
         new Thread(() -> {
+            running = true;
             worlds.forEach(world -> {
-                running = true;
                 File copyPath = new File(worldContainer + "/" + world.getName());
                 File destOfCopy = new File(toBeZipped + "/" + world.getName());
                 printToConsole("Copying "+world.getName()+"...");
